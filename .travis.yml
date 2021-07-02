@@ -50,11 +50,11 @@ jobs:
           make component/build
           make component/push
           if [ "$IMAGE_SCAN" != "false" ]; then make security/scans; fi;
-        - if [ "$TRAVIS_PULL_REQUEST" == "false" -a "$TRAVIS_BRANCH" == "master" ]; then 
-            export COMPONENT_NEWTAG="latest-dev";
+        - if [[ "$TRAVIS_PULL_REQUEST" == "false" ]] && [[ "$TRAVIS_BRANCH" == "release-"[[:digit:]].[[:digit:]] ]]; then 
+            export COMPONENT_NEWTAG="$(echo ${TRAVIS_BRANCH} | sed 's/release/latest/')";
             make component/tag;
             export COMPONENT_VERSION="latest";
-            export COMPONENT_TAG_EXTENSION="-dev";
+            export COMPONENT_TAG_EXTENSION="$(echo ${TRAVIS_BRANCH} | sed 's/release//')";
             make component/push;
           fi;
     - stage: unit-test
